@@ -1,0 +1,10 @@
+{
+  "type": "bar",
+  "categories": ["A", "B", "C"],
+  "series": [
+    {
+      "name": "Sales",
+      "values": [10, 20, 30]
+    }
+  ]
+}

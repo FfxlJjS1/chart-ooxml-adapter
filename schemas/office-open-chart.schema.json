@@ -1,0 +1,409 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/FfxlJjS1/chart-ooxml-adapter/schemas/office-open-chart.schema.json",
+  "title": "OfficeOpenChart",
+  "description": "DemoMacro-compatible Office Open JSON chart object. Intermediate ChartML representation — not XML and not an Office package.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["type", "chartSpace"],
+  "properties": {
+    "type": { "const": "chart" },
+    "chartSpace": { "$ref": "#/$defs/chartSpace" }
+  },
+  "$defs": {
+    "onOff": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["val"],
+      "properties": { "val": { "type": "boolean" } }
+    },
+    "unsignedInt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["val"],
+      "properties": { "val": { "type": "integer", "minimum": 0 } }
+    },
+    "stringVal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["val"],
+      "properties": { "val": { "type": "string", "minLength": 1 } }
+    },
+    "numberVal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["val"],
+      "properties": { "val": { "type": "number" } }
+    },
+    "axisTitle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tx"],
+      "properties": { "tx": { "type": "string", "minLength": 1 } }
+    },
+    "scaling": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["orientation"],
+      "properties": {
+        "orientation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["val"],
+          "properties": { "val": { "enum": ["minMax", "maxMin"] } }
+        },
+        "min": { "$ref": "#/$defs/numberVal" },
+        "max": { "$ref": "#/$defs/numberVal" }
+      }
+    },
+    "tickMark": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["val"],
+      "properties": { "val": { "enum": ["in", "out", "cross", "none"] } }
+    },
+    "tickLblPos": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["val"],
+      "properties": { "val": { "enum": ["nextTo", "high", "low", "none"] } }
+    },
+    "axPos": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["val"],
+      "properties": { "val": { "enum": ["b", "l", "r", "t"] } }
+    },
+    "series": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["idx", "order", "tx"],
+      "properties": {
+        "idx": { "$ref": "#/$defs/unsignedInt" },
+        "order": { "$ref": "#/$defs/unsignedInt" },
+        "tx": { "type": "string", "minLength": 1 },
+        "cat": {
+          "type": "array",
+          "items": { "type": ["string", "number"] }
+        },
+        "val": {
+          "type": "array",
+          "items": { "type": "number" }
+        },
+        "xVal": {
+          "type": "array",
+          "items": { "type": "number" }
+        },
+        "yVal": {
+          "type": "array",
+          "items": { "type": "number" }
+        },
+        "bubbleSize": {
+          "type": "array",
+          "items": { "type": "number" }
+        },
+        "invertIfNegative": { "$ref": "#/$defs/onOff" },
+        "explosion": { "$ref": "#/$defs/unsignedInt" },
+        "spPr": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "solidFill": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["srgbClr"],
+              "properties": {
+                "srgbClr": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["val"],
+                  "properties": {
+                    "val": { "type": "string", "pattern": "^[0-9A-Fa-f]{6}$" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "anyOf": [
+        { "required": ["cat", "val"] },
+        { "required": ["xVal", "yVal"] }
+      ]
+    },
+    "axIdPair": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": { "$ref": "#/$defs/unsignedInt" }
+    },
+    "grouping": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["val"],
+      "properties": {
+        "val": { "enum": ["clustered", "stacked", "percentStacked", "standard"] }
+      }
+    },
+    "dLbls": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "showLegendKey": { "$ref": "#/$defs/onOff" },
+        "showVal": { "$ref": "#/$defs/onOff" },
+        "showCatName": { "$ref": "#/$defs/onOff" },
+        "showSerName": { "$ref": "#/$defs/onOff" },
+        "showPercent": { "$ref": "#/$defs/onOff" },
+        "showBubbleSize": { "$ref": "#/$defs/onOff" }
+      }
+    },
+    "barChart": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["barDir", "grouping", "varyColors", "ser", "axId"],
+      "properties": {
+        "barDir": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["val"],
+          "properties": { "val": { "enum": ["bar", "col"] } }
+        },
+        "grouping": { "$ref": "#/$defs/grouping" },
+        "varyColors": { "$ref": "#/$defs/onOff" },
+        "ser": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/series" } },
+        "gapWidth": { "$ref": "#/$defs/unsignedInt" },
+        "overlap": { "$ref": "#/$defs/numberVal" },
+        "axId": { "$ref": "#/$defs/axIdPair" },
+        "dLbls": { "$ref": "#/$defs/dLbls" }
+      }
+    },
+    "lineChart": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["grouping", "varyColors", "ser", "axId"],
+      "properties": {
+        "grouping": { "$ref": "#/$defs/grouping" },
+        "varyColors": { "$ref": "#/$defs/onOff" },
+        "ser": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/series" } },
+        "marker": { "$ref": "#/$defs/onOff" },
+        "smooth": { "$ref": "#/$defs/onOff" },
+        "axId": { "$ref": "#/$defs/axIdPair" },
+        "dLbls": { "$ref": "#/$defs/dLbls" }
+      }
+    },
+    "areaChart": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["grouping", "varyColors", "ser", "axId"],
+      "properties": {
+        "grouping": { "$ref": "#/$defs/grouping" },
+        "varyColors": { "$ref": "#/$defs/onOff" },
+        "ser": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/series" } },
+        "axId": { "$ref": "#/$defs/axIdPair" },
+        "dLbls": { "$ref": "#/$defs/dLbls" }
+      }
+    },
+    "pieChart": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["varyColors", "ser"],
+      "properties": {
+        "varyColors": { "$ref": "#/$defs/onOff" },
+        "ser": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/series" } },
+        "firstSliceAng": { "$ref": "#/$defs/unsignedInt" },
+        "dLbls": { "$ref": "#/$defs/dLbls" }
+      }
+    },
+    "doughnutChart": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["varyColors", "ser", "holeSize"],
+      "properties": {
+        "varyColors": { "$ref": "#/$defs/onOff" },
+        "ser": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/series" } },
+        "firstSliceAng": { "$ref": "#/$defs/unsignedInt" },
+        "holeSize": { "$ref": "#/$defs/unsignedInt" },
+        "dLbls": { "$ref": "#/$defs/dLbls" }
+      }
+    },
+    "scatterChart": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scatterStyle", "varyColors", "ser", "axId"],
+      "properties": {
+        "scatterStyle": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["val"],
+          "properties": {
+            "val": { "enum": ["marker", "line", "lineMarker", "smooth", "smoothMarker"] }
+          }
+        },
+        "varyColors": { "$ref": "#/$defs/onOff" },
+        "ser": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/series" } },
+        "axId": { "$ref": "#/$defs/axIdPair" },
+        "dLbls": { "$ref": "#/$defs/dLbls" }
+      }
+    },
+    "radarChart": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["radarStyle", "varyColors", "ser", "axId"],
+      "properties": {
+        "radarStyle": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["val"],
+          "properties": { "val": { "enum": ["standard", "marker", "filled"] } }
+        },
+        "varyColors": { "$ref": "#/$defs/onOff" },
+        "ser": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/series" } },
+        "axId": { "$ref": "#/$defs/axIdPair" },
+        "dLbls": { "$ref": "#/$defs/dLbls" }
+      }
+    },
+    "bubbleChart": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["varyColors", "ser", "axId"],
+      "properties": {
+        "varyColors": { "$ref": "#/$defs/onOff" },
+        "ser": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/series" } },
+        "bubble3D": { "$ref": "#/$defs/onOff" },
+        "axId": { "$ref": "#/$defs/axIdPair" },
+        "dLbls": { "$ref": "#/$defs/dLbls" }
+      }
+    },
+    "catAx": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["axId", "scaling", "axPos", "tickLblPos", "crossAx"],
+      "properties": {
+        "axId": { "$ref": "#/$defs/unsignedInt" },
+        "scaling": { "$ref": "#/$defs/scaling" },
+        "delete": { "$ref": "#/$defs/onOff" },
+        "axPos": { "$ref": "#/$defs/axPos" },
+        "majorTickMark": { "$ref": "#/$defs/tickMark" },
+        "minorTickMark": { "$ref": "#/$defs/tickMark" },
+        "tickLblPos": { "$ref": "#/$defs/tickLblPos" },
+        "crossAx": { "$ref": "#/$defs/unsignedInt" },
+        "title": { "$ref": "#/$defs/axisTitle" }
+      }
+    },
+    "valAx": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["axId", "scaling", "axPos", "tickLblPos", "crossAx"],
+      "properties": {
+        "axId": { "$ref": "#/$defs/unsignedInt" },
+        "scaling": { "$ref": "#/$defs/scaling" },
+        "delete": { "$ref": "#/$defs/onOff" },
+        "axPos": { "$ref": "#/$defs/axPos" },
+        "majorGridlines": { "type": "object" },
+        "numFmt": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["formatCode", "sourceLinked"],
+          "properties": {
+            "formatCode": { "type": "string" },
+            "sourceLinked": { "type": "boolean" }
+          }
+        },
+        "majorTickMark": { "$ref": "#/$defs/tickMark" },
+        "minorTickMark": { "$ref": "#/$defs/tickMark" },
+        "tickLblPos": { "$ref": "#/$defs/tickLblPos" },
+        "crossAx": { "$ref": "#/$defs/unsignedInt" },
+        "title": { "$ref": "#/$defs/axisTitle" }
+      }
+    },
+    "plotArea": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "layout": { "type": "object" },
+        "barChart": { "$ref": "#/$defs/barChart" },
+        "bar3DChart": { "$ref": "#/$defs/barChart" },
+        "lineChart": { "$ref": "#/$defs/lineChart" },
+        "line3DChart": { "$ref": "#/$defs/lineChart" },
+        "pieChart": { "$ref": "#/$defs/pieChart" },
+        "pie3DChart": { "$ref": "#/$defs/pieChart" },
+        "areaChart": { "$ref": "#/$defs/areaChart" },
+        "area3DChart": { "$ref": "#/$defs/areaChart" },
+        "scatterChart": { "$ref": "#/$defs/scatterChart" },
+        "doughnutChart": { "$ref": "#/$defs/doughnutChart" },
+        "radarChart": { "$ref": "#/$defs/radarChart" },
+        "bubbleChart": { "$ref": "#/$defs/bubbleChart" },
+        "catAx": { "type": "array", "items": { "$ref": "#/$defs/catAx" } },
+        "valAx": { "type": "array", "items": { "$ref": "#/$defs/valAx" } }
+      },
+      "oneOf": [
+        { "required": ["barChart"] },
+        { "required": ["bar3DChart"] },
+        { "required": ["lineChart"] },
+        { "required": ["line3DChart"] },
+        { "required": ["pieChart"] },
+        { "required": ["pie3DChart"] },
+        { "required": ["areaChart"] },
+        { "required": ["area3DChart"] },
+        { "required": ["scatterChart"] },
+        { "required": ["doughnutChart"] },
+        { "required": ["radarChart"] },
+        { "required": ["bubbleChart"] }
+      ]
+    },
+    "legend": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["legendPos"],
+      "properties": {
+        "legendPos": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["val"],
+          "properties": { "val": { "enum": ["r", "l", "t", "b"] } }
+        },
+        "overlay": { "$ref": "#/$defs/onOff" }
+      }
+    },
+    "chartTitle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tx"],
+      "properties": {
+        "tx": { "type": "string", "minLength": 1 },
+        "overlay": { "$ref": "#/$defs/onOff" }
+      }
+    },
+    "chart": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["autoTitleDeleted", "plotArea", "plotVisOnly", "dispBlanksAs"],
+      "properties": {
+        "title": { "$ref": "#/$defs/chartTitle" },
+        "autoTitleDeleted": { "$ref": "#/$defs/onOff" },
+        "plotArea": { "$ref": "#/$defs/plotArea" },
+        "legend": { "$ref": "#/$defs/legend" },
+        "plotVisOnly": { "$ref": "#/$defs/onOff" },
+        "dispBlanksAs": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["val"],
+          "properties": { "val": { "enum": ["gap", "span", "zero"] } }
+        },
+        "showDLblsOverMax": { "$ref": "#/$defs/onOff" }
+      }
+    },
+    "chartSpace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["date1904", "lang", "roundedCorners", "chart"],
+      "properties": {
+        "date1904": { "$ref": "#/$defs/onOff" },
+        "lang": { "$ref": "#/$defs/stringVal" },
+        "roundedCorners": { "$ref": "#/$defs/onOff" },
+        "style": { "$ref": "#/$defs/unsignedInt" },
+        "chart": { "$ref": "#/$defs/chart" }
+      }
+    }
+  }
+}
