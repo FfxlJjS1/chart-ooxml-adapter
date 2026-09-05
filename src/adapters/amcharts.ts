@@ -104,7 +104,6 @@ export const amchartsAdapter: ChartSourceAdapter = {
     let categories = fieldLabels(records, categoryField);
     const title =
       asString(input.title) ??
-      (isRecord(input.titles) ? undefined : undefined) ??
       (Array.isArray(input.titles) && isRecord(input.titles[0])
         ? asString(input.titles[0].text)
         : undefined);

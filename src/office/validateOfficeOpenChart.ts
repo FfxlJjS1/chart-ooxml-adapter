@@ -6,6 +6,7 @@ import {
   type OfficeChartGroup,
   type OfficeOpenChart,
   type OfficePlotArea,
+  type OfficePlotChartKey,
   type OfficeSeries,
 } from "./OfficeOpenTypes.js";
 
@@ -113,8 +114,8 @@ function validateAxes(
   key: string,
   errors: OfficeOpenValidationIssue[],
 ): void {
-  const plot = plotArea as Record<string, unknown>;
-  if (NO_AXIS_PLOT_KEYS.has(key as (typeof NO_AXIS_PLOT_KEYS extends ReadonlySet<infer T> ? T : never))) {
+  const plot = plotArea as unknown as Record<string, unknown>;
+  if (NO_AXIS_PLOT_KEYS.has(key as OfficePlotChartKey)) {
     return;
   }
   if (!("axId" in group) || !Array.isArray(group.axId) || group.axId.length !== 2) {
@@ -206,7 +207,7 @@ export function validateOfficeOpenChart(input: unknown): OfficeOpenValidationRes
   }
 
   try {
-    const { key, group } = getPlotChartGroup(chart.plotArea as OfficePlotArea);
+    const { key, group } = getPlotChartGroup(chart.plotArea as unknown as OfficePlotArea);
     if (!Array.isArray(group.ser) || group.ser.length === 0) {
       push(errors, `chartSpace.chart.plotArea.${key}.ser`, "required ChartML entity c:ser is missing");
     } else {
@@ -217,7 +218,7 @@ export function validateOfficeOpenChart(input: unknown): OfficeOpenValidationRes
     if (!("varyColors" in group) || !isOnOff(group.varyColors)) {
       push(errors, `chartSpace.chart.plotArea.${key}.varyColors`, "required ChartML entity c:varyColors is missing");
     }
-    validateAxes(chart.plotArea as OfficePlotArea, group, key, errors);
+    validateAxes(chart.plotArea as unknown as OfficePlotArea, group, key, errors);
   } catch (error) {
     push(errors, "chartSpace.chart.plotArea", error instanceof Error ? error.message : "invalid plotArea");
   }

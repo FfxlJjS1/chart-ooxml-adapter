@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { convertChart, convertChartToJson } from "../../src/convert.js";
-import { detectChartSource } from "../../src/adapters/index.js";
-import { validateOfficeOpenChart } from "../../src/office/validateOfficeOpenChart.js";
+import { convertChart, convertChartToJson } from "../src/convert.js";
+import { detectChartSource } from "../src/adapters/index.js";
+import { validateOfficeOpenChart } from "../src/office/validateOfficeOpenChart.js";
 
 describe("convertChart pipeline", () => {
   it("converts a UniversalChartModel into Office Open JSON", () => {
